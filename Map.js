@@ -6,6 +6,7 @@ import { connectActionSheet } from '@expo/react-native-action-sheet';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import firebaseconfig from "./Secrets"
+import AddThreatForm from './AddThreatForm';
 
 
 const app = initializeApp(firebaseConfig);
@@ -13,7 +14,8 @@ const app = initializeApp(firebaseConfig);
 class Map extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {markers:[]};
+    this.setState = this.setState.bind(this);
+    this.state = {markers:[], showThreatForm: false, lat:0, long:0};
   }
 
   componentDidMount() {
@@ -27,7 +29,7 @@ class Map extends React.Component {
 
 
 
-    _onOpenActionSheet = () => {
+    _onOpenActionSheet = (title, body) => {
         // Same interface as https://facebook.github.io/react-native/docs/actionsheetios.html
         const options = ['Delete', 'Save', 'Cancel'];
         const destructiveButtonIndex = 0;
@@ -38,6 +40,8 @@ class Map extends React.Component {
             options,
             cancelButtonIndex,
             destructiveButtonIndex,
+            title: title,
+            message: body,
           },
           (buttonIndex) => {
             // Do something here depending on the button index selected
@@ -49,12 +53,21 @@ class Map extends React.Component {
     return(
 
       <View style={styles.container}>
-      <MapView style={styles.map}>
+        {this.state.showThreatForm && <AddThreatForm setState={this.setState} lat={this.state.lat} long={this.state.long}></AddThreatForm> }
+      <MapView style={styles.map} 
+      onLongPress={(e) => {
+            const lat = e.nativeEvent.coordinate.latitude;
+            const long = e.nativeEvent.coordinate.longitude;
+            console.log(long)
+            this.setState({showThreatForm:true, lat, long})
+      }}>
         {this.state.markers.map((marker) => {
           return (<Marker key = {marker["lat"]} 
                         coordinate={{ latitude : marker["lat"], longitude : marker["long"] }} 
-                        title={marker["title"]} 
-                        description={marker["body"]}/>)
+                        // title={marker["title"]} 
+                        // description={marker["body"]}
+                        onPress={() => this._onOpenActionSheet(marker["title"], marker["body"])}
+                        />)
           })}
       </MapView>
     </View>
@@ -75,5 +88,6 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
+    zIndex:-1,
   },
 });
