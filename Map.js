@@ -5,7 +5,7 @@ import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { connectActionSheet } from '@expo/react-native-action-sheet';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
-import firebaseconfig from "./Secrets"
+import firebaseConfig from "./Secrets"
 import AddThreatForm from './AddThreatForm';
 
 
