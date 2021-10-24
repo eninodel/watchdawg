@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import MapView ,{Marker} from 'react-native-maps';
-import { StyleSheet, Text, View, Dimensions, Button, Modal} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Button, Modal, SafeAreaView} from 'react-native';
 import { connectActionSheet } from '@expo/react-native-action-sheet';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
@@ -39,8 +39,10 @@ class Map extends React.Component {
 
   render() {
     return(
-
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.reportButton}>
+          <Button color='#ff0000' title='📢Report' onPress={console.log('hello')} />
+        </View>
         {this.state.showThreatForm && <AddThreatForm setState={this.setState} counter={this.state.counter} lat={this.state.lat} long={this.state.long}></AddThreatForm> }
         
       <MapView style={styles.map} 
@@ -79,7 +81,7 @@ class Map extends React.Component {
               <Button title="Close" onPress={() => this.setState({showModal:false})}></Button>
           </View>
       </Modal>
-    </View>
+    </SafeAreaView>
       )
     };
 }
@@ -114,5 +116,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5
+  },
+  reportButton: {
+    position: 'absolute',
+    bottom: 30
   }
 });
