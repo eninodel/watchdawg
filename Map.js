@@ -7,6 +7,7 @@ import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import firebaseConfig from "./Secrets"
 import AddThreatForm from './AddThreatForm';
+import { registerForPushNotificationsAsync } from './Notifications';
 
 
 const app = initializeApp(firebaseConfig);
@@ -25,6 +26,9 @@ class Map extends React.Component {
           const markersArr = markers.val();
           this.setState({markers: markersArr});
       })
+
+      // register app for notifications
+      registerForPushNotificationsAsync()
   }
 
 
