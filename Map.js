@@ -1,12 +1,8 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import MapView ,{Marker} from 'react-native-maps';
-<<<<<<< HEAD
-import { StyleSheet, Text, View, Dimensions, Button, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Button, Modal} from 'react-native';
 import { connectActionSheet } from '@expo/react-native-action-sheet';
-=======
-import { StyleSheet, Text, View, Dimensions, Modal, Button } from 'react-native';
->>>>>>> 79d530844cd30ca545d1b484503cada07870f818
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import firebaseconfig from "./Secrets"
