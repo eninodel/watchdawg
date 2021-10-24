@@ -1,11 +1,37 @@
-import React, {useState} from "react"
+import React, {useState, useEffect, useRef} from "react"
 import { StyleSheet, Text, View, Button, TextInput, Alert } from "react-native"
 import RadioGroup from 'react-native-radio-buttons-group';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue, set,} from 'firebase/database';
 import firebaseconfig from "./Secrets"
+import Constants from 'expo-constants';
+import * as Notifications from 'expo-notifications';
+import { schedulePushNotification, registerForPushNotificationsAsync } from "./Notifications";
 
 export default function AddThreatForm({setState, counter, lat, long}){
+    // Notifications related stuff
+    const [notification, setNotification] = useState(false);
+    const notificationListener = useRef();
+    const responseListener = useRef();
+  
+    useEffect(() => {
+      registerForPushNotificationsAsync()
+  
+      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        setNotification(notification);
+      });
+  
+      // Use this to redirect to the appropriate react screen when the notification is tapped
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log(response);
+      });
+  
+      return () => {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+        Notifications.removeNotificationSubscription(responseListener.current);
+      };
+    }, []);
+
     const [form, setForm] = useState({title:"", body:"", threatLevel:""})
     const radioButtonsData = [{
         id: '1', // acts as primary key, should be unique and non-empty string
@@ -47,6 +73,17 @@ export default function AddThreatForm({setState, counter, lat, long}){
         set(counterReference, counter + 1)
         set(reference, {title: form.title, body: form.body, upvotes: 0, lat, long, threatLevel: form.threatLevel, date: today})
         setState({showThreatForm: false})
+
+        // send a notification
+        color = null
+        if (form.threatLevel === 'moderate') {
+            color = '​​😬'
+        } else if (form.threatLevel === 'high') {
+            color = '​​​🚨'
+        } else if (form.threatLevel === 'severe') {
+            color = '💣'
+        }
+        schedulePushNotification(`​${color} ${form.threatLevel.toUpperCase()} ALERT REPORTED: ${form.title}`, `${form.body}`, null) // delay is 1s to make the notification seen more real
     }
     return (
         <View style={styles.container}>

@@ -30,7 +30,7 @@
     },
     "plugins": [
       ["expo-notifications", {
-        "icon": "./local/assets/notification-icon.png",
+        "icon": "./assets/favicon.png",
         "color": "#ffffff",
         "sounds": ["./local/assets/notification-sound.wav", "./local/assets/notification-sound-other.wav"],
         "mode": "production"

@@ -12,7 +12,6 @@ Notifications.setNotificationHandler({
 });
 
 export default function App() {
-  // const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -60,14 +59,14 @@ export default function App() {
   );
 }
 
-export async function schedulePushNotification() {
+export async function schedulePushNotification(notifTitle, notifBody, notifDelay) {
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: "You've got mail! 📬",
-      body: 'Here is the notification body',
+      title: notifTitle,
+      body: notifBody,
       data: { data: 'goes here' },
     },
-    trigger: null, // send it immediately
+    trigger: notifDelay
   });
 }
 
