@@ -8,7 +8,7 @@ import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import { schedulePushNotification, registerForPushNotificationsAsync } from "./Notifications";
 
-export default function AddThreatForm({setState, counter, lat, long, droppingPin}){
+export default function AddThreatForm({setState, counter, lat, long, droppingPin, region}){
     // Notifications related stuff
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
@@ -98,7 +98,9 @@ export default function AddThreatForm({setState, counter, lat, long, droppingPin
         />
             <View style={styles.buttons}>
                 <Button style={styles.button} title="Submit"  onPress={() => handleSubmit()}></Button>
-                <Button title="Cancel" onPress={() => setState({showThreatForm: false, droppingPin: false})}></Button>
+                <Button title="Cancel" onPress={() => setState({
+                    showThreatForm: false, droppingPin: false,
+                })}></Button>
             </View>
         </View>
     )
@@ -110,7 +112,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center',
-      height:"50%",
+      height:"35%",
       width:"100%",
       zIndex:3,
       position: "absolute",
