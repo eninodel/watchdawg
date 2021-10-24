@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import MapView ,{Marker} from 'react-native-maps';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
-import { connectActionSheet } from '@expo/react-native-action-sheet';
+import { StyleSheet, Text, View, Dimensions, Modal, Button } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import firebaseconfig from "./Secrets"
@@ -15,7 +14,7 @@ class Map extends React.Component {
   constructor(props) {
     super(props);
     this.setState = this.setState.bind(this);
-    this.state = {markers:{}, showThreatForm: false, lat:0, long:0, counter: 0};
+    this.state = {markers:{}, showThreatForm: false, lat:0, long:0, counter: 0, showModal:false, title: "", body: "", date:0};
   }
 
   componentDidMount() {
@@ -23,7 +22,6 @@ class Map extends React.Component {
       const reference = ref(db, 'Markers/');
       onValue(reference, (markers) => {
           const markersArr = markers.val();
-          console.log(markersArr);
           this.setState({markers: markersArr});
       })
       const counterReference = ref(db, "counter");
@@ -33,35 +31,14 @@ class Map extends React.Component {
   }
 
 
-
-    _onOpenActionSheet = (title, body, time) => {
-        const options = ['Delete', 'Save', 'Cancel'];
-        const destructiveButtonIndex = 0;
-        const cancelButtonIndex = 2;
-        const diffMs = time - new Date().getTime();
-        console.log(diffMs)
-        const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
-        this.props.showActionSheetWithOptions(
-          {
-            options,
-            cancelButtonIndex,
-            destructiveButtonIndex,
-            title: title,
-            message: body + diffMins + " minutes ago",
-          },
-          (buttonIndex) => {
-            // Do something here depending on the button index selected
-          }
-        );
-      };
-
   render() {
     return(
 
       <View style={styles.container}>
         {this.state.showThreatForm && <AddThreatForm setState={this.setState} counter={this.state.counter} lat={this.state.lat} long={this.state.long}></AddThreatForm> }
+        
       <MapView style={styles.map} 
-      region={{latitude: 47.6062, longitude: -122.3321, latitudeDelta:0.15, longitudeDelta:0.25}}
+      initialRegion={{latitude: 47.6062, longitude: -122.3321, latitudeDelta:0.15, longitudeDelta:0.25}}
       onLongPress={(e) => {
             const lat = e.nativeEvent.coordinate.latitude;
             const long = e.nativeEvent.coordinate.longitude;
@@ -71,22 +48,37 @@ class Map extends React.Component {
         const marker = this.state.markers[key];
         return (<Marker key = {marker["lat"]} 
         coordinate={{ latitude : marker["lat"], longitude : marker["long"] }} 
-        title={marker["title"]} 
-        description={marker["body"]}
+        
         onPress={() => {
-          this._onOpenActionSheet(marker["title"], marker["body"], marker['date']);
-          console.log(marker['date'])
+          const diffMs = new Date().getTime() - marker["date"];
+          const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+          this.setState({showModal:true, title: marker["title"], body: marker["body"], date: diffMins})
         }}
         />) 
       }) }
       </MapView>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={this.state.showModal}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          this.setState({showModal:false})
+        }}
+      >
+          <View style={styles.modal}>
+              <Text style={{fontSize:40, textAlign:"center", color:"white"}}>{this.state.title}</Text>
+              <Text style={{marginBottom:25, color:"white"}}>{this.state.date} minute(s) ago</Text>
+              <Text style={{fontSize:20, textAlign:"center", color:"white"}}>{this.state.body}</Text>
+              <Button title="Close" onPress={() => this.setState({showModal:false})}></Button>
+          </View>
+      </Modal>
     </View>
       )
     };
 }
 
-const ConnectedApp = connectActionSheet(Map);
-export default ConnectedApp;
+export default Map;
 
 const styles = StyleSheet.create({
   container: {
@@ -99,5 +91,22 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
     zIndex:-1,
-  },
+  }, modal:{
+    bottom:0,
+    position:"absolute",
+    backgroundColor: "#D99DF5",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    height:"50%",
+    width:"100%",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  }
 });
