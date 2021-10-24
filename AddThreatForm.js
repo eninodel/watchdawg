@@ -87,7 +87,9 @@ export default function AddThreatForm({setState, counter, lat, long, droppingPin
     }
     return (
         <View style={styles.container}>
-            <Text>Add a New Threat</Text>
+            <Text style={{
+                fontSize:25
+            }}>Add a New Threat</Text>
             <TextInput style={styles.input} placeholder="Title of Threat" onChangeText={text => setForm({...form,title:text})}></TextInput>
             <TextInput style={styles.input} placeholder="Description of Threat" onChangeText={text => setForm({...form,body:text})}></TextInput>
             <Text>Select Threat Level</Text>
@@ -108,8 +110,9 @@ export default function AddThreatForm({setState, counter, lat, long, droppingPin
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: '#fff',
+        flex: 1,
+        padding:0,
+      backgroundColor: '#E9BBFF',
       alignItems: 'center',
       justifyContent: 'center',
       height:"35%",
@@ -117,15 +120,14 @@ const styles = StyleSheet.create({
       zIndex:3,
       position: "absolute",
       bottom: 0
-    }, input:{
+    }, input: {
+        paddingLeft:10,
         height:50,
         width:"80%",
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: 20,
+        backgroundColor: "white",
+        marginBottom:5,
     }, button:{
-        borderStyle: 'solid',
-        borderWidth: 1,
         borderRadius: 5,
         color:"white",
         backgroundColor:"black"

@@ -169,7 +169,8 @@ class Map extends React.Component {
             <TextInput style={{
               height: 50,
               backgroundColor: "white",
-              color: "black",
+                color: "black",
+                paddingLeft:10,
               width: "90%",
                 borderRadius: 20,
             }} placeholder='Add Comment Here' ></TextInput>
