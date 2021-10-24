@@ -125,7 +125,7 @@ class Map extends React.Component {
           <Button title="Clear Filter" onPress={() => { this.setState({ markers: startingMarkers, lat: this.region.current.latitude + 0, long: this.region.current.longitude, latDel: this.region.current.latitudeDelta, longDel: this.region.current.longitudeDelta }) }}></Button>
         </View>}
         <View style={styles.reportButton}>
-          {!this.state.showThreatForm && !this.state.droppingPin && <Button color='#f9232c' title='📢Report' onPress={(e) => {this.setState({droppingPin: true, lat: this.region.current.latitude + 0, long: this.region.current.longitude, latDel: this.region.current.latitudeDelta, longDel: this.region.current.longitudeDelta})}} />}
+          {!this.state.showThreatForm && !this.state.droppingPin && <Button color='#f9232c' title='📢Report' onPress={(e) => {this.setState({droppingPin: true, lat: this.region.current.latitude, long: this.region.current.longitude, latDel: this.region.current.latitudeDelta, longDel: this.region.current.longitudeDelta})}} />}
           {
             this.state.droppingPin && !this.state.showThreatForm
             && <Button color='grey' title='Cancel' onPress={(e) => {this.setState({droppingPin: false, lat: this.region.current.latitude + 0, long: this.region.current.longitude, latDel: this.region.current.latitudeDelta, longDel: this.region.current.longitudeDelta})}} />
@@ -150,10 +150,10 @@ class Map extends React.Component {
             const long = e.nativeEvent.coordinate.longitude;
             // add a green marker that will be our preliminary incident report
             const tempMarker = {title: 'pending', body: 'pending', lat, long, upvotes: 0, threatLevel: 'pending', date: new Date().getTime()};
-            this.setState(prevState => ({showThreatForm:true, lat: lat, long: long, latDel: this.region.latDel, longDel: this.region.longDel, markers: {...this.state.markers, 1000000: tempMarker}}));
+            this.setState(prevState => ({showThreatForm:true, lat: lat - this.region.current.latitudeDelta / 4, long: long, latDel: this.region.latDel, longDel: this.region.longDel, markers: {...this.state.markers, 1000000: tempMarker}}));
       }}
       // adjust latitude by a little when displaying to center the selected target
-      region={{latitude: this.state.lat + 0.01, longitude: this.state.long, latitudeDelta: this.state.latDel, longitudeDelta: this.state.longDel}}>
+      region={{latitude: this.state.lat, longitude: this.state.long, latitudeDelta: this.state.latDel, longitudeDelta: this.state.longDel}}>
         {markersToRender}
       </MapView>
       <Modal
