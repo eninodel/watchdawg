@@ -36,6 +36,16 @@ class Map extends React.Component {
       })
   }
 
+  renderDate =(minutes) => {
+    if (minutes < 60) {
+      return minutes +" minute(s) ago"
+    } else if (minutes < 720) {
+      return Math.round((minutes / 60)) + " hour(s) and " + (minutes%60) + " minute(s) ago"
+    } else {
+      return Math.round((minutes/ 720)) + " day(s) and " + Math.round(((minutes % 720 )/ 60)) + " hour(s) and " + ((minutes % 720 )% 60) + " minute(s) ago"
+    }
+  }
+
 
   render() {
     return(
@@ -65,9 +75,10 @@ class Map extends React.Component {
         return (<Marker key = {key} 
         coordinate={{ latitude : marker["lat"], longitude : marker["long"] }} 
         
-        onPress={() => {
-          const diffMs = new Date().getTime() - marker["date"];
-          const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+          onPress={() => {
+            const today = new Date();
+          const diffMs = today.getTime() - marker["date"];
+          const diffMins = Math.round(diffMs/ 60000); // minutes
           this.setState({showModal:true, title: marker["title"], body: marker["body"], date: diffMins})
         }}
         />) 
@@ -84,7 +95,7 @@ class Map extends React.Component {
       >
           <View style={styles.modal}>
               <Text style={{fontSize:40, textAlign:"center", color:"white"}}>{this.state.title}</Text>
-              <Text style={{marginBottom:25, color:"white"}}>{this.state.date} minute(s) ago</Text>
+            <Text style={{ marginBottom: 25, color: "white" }}>{ this.renderDate(this.state.date)}</Text>
               <Text style={{fontSize:20, textAlign:"center", color:"white"}}>{this.state.body}</Text>
               <Button title="Close" onPress={() => this.setState({showModal:false})}></Button>
           </View>
