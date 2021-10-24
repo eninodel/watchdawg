@@ -9,13 +9,13 @@ import firebaseconfig from "./Secrets"
 import AddThreatForm from './AddThreatForm';
 
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseconfig);
 
 class Map extends React.Component {
   constructor(props) {
     super(props);
     this.setState = this.setState.bind(this);
-    this.state = {markers:[], showThreatForm: false, lat:0, long:0};
+    this.state = {markers:{}, showThreatForm: false, lat:0, long:0, counter: 0};
   }
 
   componentDidMount() {
@@ -23,25 +23,31 @@ class Map extends React.Component {
       const reference = ref(db, 'Markers/');
       onValue(reference, (markers) => {
           const markersArr = markers.val();
+          console.log(markersArr);
           this.setState({markers: markersArr});
+      })
+      const counterReference = ref(db, "counter");
+      onValue(counterReference, (counter) => {
+        this.setState({counter:counter.val()})
       })
   }
 
 
 
-    _onOpenActionSheet = (title, body) => {
-        // Same interface as https://facebook.github.io/react-native/docs/actionsheetios.html
+    _onOpenActionSheet = (title, body, time) => {
         const options = ['Delete', 'Save', 'Cancel'];
         const destructiveButtonIndex = 0;
         const cancelButtonIndex = 2;
-      
+        const diffMs = time - new Date().getTime();
+        console.log(diffMs)
+        const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
         this.props.showActionSheetWithOptions(
           {
             options,
             cancelButtonIndex,
             destructiveButtonIndex,
             title: title,
-            message: body,
+            message: body + diffMins + " minutes ago",
           },
           (buttonIndex) => {
             // Do something here depending on the button index selected
@@ -53,22 +59,26 @@ class Map extends React.Component {
     return(
 
       <View style={styles.container}>
-        {this.state.showThreatForm && <AddThreatForm setState={this.setState} lat={this.state.lat} long={this.state.long}></AddThreatForm> }
+        {this.state.showThreatForm && <AddThreatForm setState={this.setState} counter={this.state.counter} lat={this.state.lat} long={this.state.long}></AddThreatForm> }
       <MapView style={styles.map} 
+      region={{latitude: 47.6062, longitude: -122.3321, latitudeDelta:0.15, longitudeDelta:0.25}}
       onLongPress={(e) => {
             const lat = e.nativeEvent.coordinate.latitude;
             const long = e.nativeEvent.coordinate.longitude;
-            console.log(long)
             this.setState({showThreatForm:true, lat, long})
       }}>
-        {this.state.markers.map((marker) => {
-          return (<Marker key = {marker["lat"]} 
-                        coordinate={{ latitude : marker["lat"], longitude : marker["long"] }} 
-                        // title={marker["title"]} 
-                        // description={marker["body"]}
-                        onPress={() => this._onOpenActionSheet(marker["title"], marker["body"])}
-                        />)
-          })}
+      {Object.keys(this.state.markers).map((key) => {
+        const marker = this.state.markers[key];
+        return (<Marker key = {marker["lat"]} 
+        coordinate={{ latitude : marker["lat"], longitude : marker["long"] }} 
+        title={marker["title"]} 
+        description={marker["body"]}
+        onPress={() => {
+          this._onOpenActionSheet(marker["title"], marker["body"], marker['date']);
+          console.log(marker['date'])
+        }}
+        />) 
+      }) }
       </MapView>
     </View>
       )
