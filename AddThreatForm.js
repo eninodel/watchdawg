@@ -8,7 +8,7 @@ import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import { schedulePushNotification, registerForPushNotificationsAsync } from "./Notifications";
 
-export default function AddThreatForm({setState, counter, lat, long}){
+export default function AddThreatForm({setState, counter, lat, long, droppingPin}){
     // Notifications related stuff
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
@@ -72,7 +72,7 @@ export default function AddThreatForm({setState, counter, lat, long}){
         const counterReference = ref(db, "counter");
         set(counterReference, counter + 1)
         set(reference, {title: form.title, body: form.body, upvotes: 0, lat, long, threatLevel: form.threatLevel, date: today})
-        setState({showThreatForm: false})
+        setState({showThreatForm: false, droppingPin: false})
 
         // send a notification
         color = null
@@ -96,8 +96,10 @@ export default function AddThreatForm({setState, counter, lat, long}){
             radioButtons={radioButtons} 
             onPress={onPressRadioButton} 
         />
-            <Button style={styles.button} title="Submit"  onPress={() => handleSubmit()}></Button>
-            <Button title="go back" onPress={() => setState({showThreatForm: false})}></Button>
+            <View style={styles.buttons}>
+                <Button style={styles.button} title="Submit"  onPress={() => handleSubmit()}></Button>
+                <Button title="Cancel" onPress={() => setState({showThreatForm: false, droppingPin: false})}></Button>
+            </View>
         </View>
     )
 }
@@ -108,10 +110,11 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center',
-      height:"100%",
+      height:"50%",
       width:"100%",
       zIndex:3,
       position: "absolute",
+      bottom: 0
     }, input:{
         height:50,
         width:"80%",
@@ -125,5 +128,8 @@ const styles = StyleSheet.create({
         color:"white",
         backgroundColor:"black"
 
+    },
+    buttons:{
+        flexDirection: "row",
     }
   });

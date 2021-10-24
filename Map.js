@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import MapView ,{Marker} from 'react-native-maps';
-import { StyleSheet, Text, View, Dimensions, Button, Modal, SafeAreaView} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Button, Modal} from 'react-native';
 import { connectActionSheet } from '@expo/react-native-action-sheet';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
@@ -16,7 +16,7 @@ class Map extends React.Component {
   constructor(props) {
     super(props);
     this.setState = this.setState.bind(this);
-    this.state = {markers:{}, showThreatForm: false, lat:0, long:0, counter: 0, showModal:false, title: "", body: "", date:0, droppingPin: false};
+    this.state = {markers:{}, showThreatForm: false, lat:47.65537844011764, long:-122.30325168060438, counter: 0, showModal:false, title: "", body: "", date:0, droppingPin: false};
   }
 
   componentDidMount() {
@@ -39,29 +39,41 @@ class Map extends React.Component {
 
   render() {
     return(
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.reportButton}>
-          {!this.state.droppingPin && <Button color='#f9232c' title='📢Report' onPress={(e) => {this.setState({droppingPin: true})}} />}
+          {!this.state.showThreatForm && !this.state.droppingPin && <Button color='#f9232c' title='📢Report' onPress={(e) => {this.setState({droppingPin: true})}} />}
           {
-            this.state.droppingPin 
+            this.state.droppingPin && !this.state.showThreatForm
             && <Button color='grey' title='Cancel' onPress={(e) => {this.setState({droppingPin: false})}} />
           }
         </View>
         {
           this.state.droppingPin &&
-          <Text style={styles.pinDropPrompt}>Long hold on the location of the incident</Text>
+          <Text style={styles.pinDropPrompt}>Long hold to select the location of the incident</Text>
         }
-        {this.state.showThreatForm && <AddThreatForm setState={this.setState} counter={this.state.counter} lat={this.state.lat} long={this.state.long}></AddThreatForm> }
+        {this.state.showThreatForm && <AddThreatForm setState={this.setState} counter={this.state.counter} lat={this.state.lat} long={this.state.long} droppingPin={this.state.droppingPin}></AddThreatForm> }
         
       <MapView style={styles.map} 
-      initialRegion={{latitude: 47.6062, longitude: -122.3321, latitudeDelta:0.15, longitudeDelta:0.25}}
       onLongPress={(e) => {
+            if (!this.state.droppingPin) {
+              // don't allow long presses if we aren't in ping dropping mode
+              return
+            }
             const lat = e.nativeEvent.coordinate.latitude;
             const long = e.nativeEvent.coordinate.longitude;
-            this.setState({showThreatForm:true, lat, long})
-      }}>
+
+            // add a green marker that will be our preliminary incident report
+            // const tempMarker = {title: 'fasdfa', body: 'asdfasdfa', lat: this.state.lat, long: this.state.long, upvotes: 0, threatLevel: 'pending', date: new Date().getTime()};
+            this.setState(prevState => ({showThreatForm:true, lat, long}));
+      }}
+      // adjust latitude by a little when displaying to center the selected target
+      region={{latitude: this.state.lat - 0.01, longitude: this.state.long, latitudeDelta:0.03, longitudeDelta:0.05}}>
       {Object.keys(this.state.markers).map((key) => {
         const marker = this.state.markers[key];
+        // const pinColor = 'red'
+        // if (marker["threatLevel"] !== undefined && marker["threatLevel"] === 'pending') {
+        //   pinColor = 'green'
+        // }
         return (<Marker key = {key} 
         coordinate={{ latitude : marker["lat"], longitude : marker["long"] }} 
         
@@ -70,6 +82,8 @@ class Map extends React.Component {
           const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
           this.setState({showModal:true, title: marker["title"], body: marker["body"], date: diffMins})
         }}
+
+        // pinColor={pinColor}
         />) 
       }) }
       </MapView>
@@ -89,7 +103,7 @@ class Map extends React.Component {
               <Button title="Close" onPress={() => this.setState({showModal:false})}></Button>
           </View>
       </Modal>
-    </SafeAreaView>
+    </View>
       )
     };
 }
