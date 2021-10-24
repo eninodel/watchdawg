@@ -175,22 +175,28 @@ class Map extends React.Component {
         }}
       >
           <View style={styles.modal}>
-            <View style={{ width:"90%", backgroundColor:"white", borderRadius:20, marginTop:15, display: "flex", flexDirection:"column", alignItems:"center" }}>
-              <Text style={{fontSize:40, textAlign:"center", color:"black"}}>{this.state.title}</Text>
-            <Text style={{ color: "black" }}>{ this.renderDate(this.state.date)}</Text>
-              <Text style={{fontSize:20, textAlign:"center", color:"black"}}>{this.state.body}</Text>
+            <View style={{ width:"90%", backgroundColor:"#EAF0F0", borderRadius:20, marginTop:15, display: "flex", flexDirection:"column", alignItems:"center" }}>
+              <Text style={{color: 'red', marginTop: 5}}>ALERT!</Text>
+              <Text style={{fontSize:30, textAlign:"center", color:"black"}}>{this.state.title}</Text>
+              <Text style={{ color: "black", fontStyle: 'italic'}}>{ this.renderDate(this.state.date)}</Text>
+              <Text style={{fontSize:15, textAlign:"center", color:"black"}}>{this.state.body}</Text>
+              <View style={styles.reactions}>
+                <Image style={{height:50, width:50}} source={require('./assets/empty-upvote.png') } />
+                <Image style={{height:50, width:50, position: 'absolute', right: 5}} source={require('./assets/flag.png')} />
+              </View>
             </View>
             <View style = {{paddingBottom:10, width:"100%", display: "flex", flexDirection:"column", alignItems: "center", }}>
 
             <TextInput style={{
               height: 50,
-              backgroundColor: "white",
+              backgroundColor: "#EAF0F0",
                 color: "black",
                 paddingLeft:10,
               width: "90%",
                 borderRadius: 20,
+              margin: 10
             }} placeholder='Add Comment Here' ></TextInput>
-              <Button title="Close" onPress={() => this.setState({showModal:false})}></Button>
+              <Button color='gray' title="Close" onPress={() => this.setState({showModal:false})}></Button>
             </View>
           </View>
       </Modal>
@@ -224,7 +230,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-between",
-    height:"35%",
+    height:"60%",
     width:"100%",
     shadowColor: "#000",
     shadowOffset: {
@@ -249,4 +255,9 @@ const styles = StyleSheet.create({
     color: 'white',
     borderRadius: 20,
   },
+  reactions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: "100%",
+  }
 });
