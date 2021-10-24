@@ -16,7 +16,7 @@ class Map extends React.Component {
   constructor(props) {
     super(props);
     this.setState = this.setState.bind(this);
-    this.state = {markers:{}, showThreatForm: false, lat:0, long:0, counter: 0, showModal:false, title: "", body: "", date:0};
+    this.state = {markers:{}, showThreatForm: false, lat:0, long:0, counter: 0, showModal:false, title: "", body: "", date:0, droppingPin: false};
   }
 
   componentDidMount() {
@@ -41,8 +41,16 @@ class Map extends React.Component {
     return(
       <SafeAreaView style={styles.container}>
         <View style={styles.reportButton}>
-          <Button color='#ff0000' title='📢Report' onPress={console.log('hello')} />
+          {!this.state.droppingPin && <Button color='#f9232c' title='📢Report' onPress={(e) => {this.setState({droppingPin: true})}} />}
+          {
+            this.state.droppingPin 
+            && <Button color='grey' title='Cancel' onPress={(e) => {this.setState({droppingPin: false})}} />
+          }
         </View>
+        {
+          this.state.droppingPin &&
+          <Text style={styles.pinDropPrompt}>Long hold on the location of the incident</Text>
+        }
         {this.state.showThreatForm && <AddThreatForm setState={this.setState} counter={this.state.counter} lat={this.state.lat} long={this.state.long}></AddThreatForm> }
         
       <MapView style={styles.map} 
@@ -54,7 +62,7 @@ class Map extends React.Component {
       }}>
       {Object.keys(this.state.markers).map((key) => {
         const marker = this.state.markers[key];
-        return (<Marker key = {marker["lat"]} 
+        return (<Marker key = {key} 
         coordinate={{ latitude : marker["lat"], longitude : marker["long"] }} 
         
         onPress={() => {
@@ -120,5 +128,15 @@ const styles = StyleSheet.create({
   reportButton: {
     position: 'absolute',
     bottom: 30
-  }
+  },
+  pinDropPrompt: {
+    position: 'absolute',
+    top: 75,
+    fontSize: 16,
+    fontWeight: 'bold',
+    backgroundColor: '#f9232c',
+    padding: 10,
+    color: 'white',
+    borderRadius: 20,
+  },
 });
