@@ -85,13 +85,14 @@ export default function AddThreatForm({setState, counter, lat, long, droppingPin
         }
         schedulePushNotification(`​${color} ${form.threatLevel.toUpperCase()} ALERT REPORTED: ${form.title}`, `${form.body}`, null) // delay is 1s to make the notification seen more real
     }
+
     return (
         <View style={styles.container}>
             <Text style={{
                 fontSize:25
             }}>Add a New Threat</Text>
-            <TextInput style={styles.input} placeholder="Title of Threat" onChangeText={text => setForm({...form,title:text})}></TextInput>
-            <TextInput style={styles.input} placeholder="Description of Threat" onChangeText={text => setForm({...form,body:text})}></TextInput>
+            <TextInput style={styles.input} placeholder="What happened?" onChangeText={text => setForm({...form,title:text})}></TextInput>
+            <TextInput style={styles.input} multiline={true} placeholder="Tell us more about what's going on" onChangeText={text => setForm({...form,body:text})}></TextInput>
             <Text>Select Threat Level</Text>
             <RadioGroup 
             layout='row'
@@ -101,8 +102,8 @@ export default function AddThreatForm({setState, counter, lat, long, droppingPin
             <View style={styles.buttons}>
                 <Button style={styles.button} title="Submit"  onPress={() => handleSubmit()}></Button>
                 <Button title="Cancel" onPress={() => setState({
-                    showThreatForm: false, droppingPin: false,
-                })}></Button>
+            showThreatForm: false, droppingPin: false
+        })}></Button>
             </View>
         </View>
     )

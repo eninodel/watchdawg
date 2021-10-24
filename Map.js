@@ -123,18 +123,18 @@ class Map extends React.Component {
             const lat = e.nativeEvent.coordinate.latitude;
             const long = e.nativeEvent.coordinate.longitude;
             // add a green marker that will be our preliminary incident report
-            const tempMarker = {title: 'fasdfa', body: 'asdfasdfa', lat, long, upvotes: 0, threatLevel: 'pending', date: new Date().getTime()};
-            this.setState(prevState => ({showThreatForm:true, lat: lat, long, markers: {...this.state.markers, 1000000: tempMarker}}));
+            const tempMarker = {title: 'pending', body: 'pending', lat, long, upvotes: 0, threatLevel: 'pending', date: new Date().getTime()};
+            this.setState(prevState => ({showThreatForm:true, lat: lat, long: long, latDel: this.region.latDel, longDel: this.region.longDel, markers: {...this.state.markers, 1000000: tempMarker}}));
       }}
       // adjust latitude by a little when displaying to center the selected target
       region={{latitude: this.state.lat - 0, longitude: this.state.long, latitudeDelta: this.state.latDel, longitudeDelta: this.state.longDel}}>
           {Object.keys(this.state.markers).map((key) => {
             if (key == 1000000 && !this.state.droppingPin) return;
         const marker = this.state.markers[key];
-        // const pinColor = 'red'
-        // if (marker["threatLevel"] !== undefined && marker["threatLevel"] === 'pending') {
-        //   pinColor = 'green'
-        // }
+        var color = 'red'
+        if (marker["threatLevel"] === 'pending') {
+          color = 'green'
+        }
         return (<Marker key = {key} 
         coordinate={{ latitude : marker["lat"], longitude : marker["long"] }} 
         
@@ -145,7 +145,7 @@ class Map extends React.Component {
           this.setState({showModal:true, title: marker["title"], body: marker["body"], date: diffMins, lat:marker["lat"], long: marker["long"] })
         }}
 
-        // pinColor={pinColor}
+        pinColor={color}
         />) 
       }) }
       </MapView>
