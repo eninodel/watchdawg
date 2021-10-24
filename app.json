@@ -7,8 +7,8 @@
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover",
+      "backgroundColor": "#C198D3"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -30,10 +30,10 @@
     },
     "plugins": [
       ["expo-notifications", {
-        "icon": "./assets/favicon.png",
+        "icon": "./assets/notif-icon.png",
         "color": "#ffffff",
         "sounds": ["./local/assets/notification-sound.wav", "./local/assets/notification-sound-other.wav"],
-        "mode": "production"
+        "mode": "development"
       }]
     ]
   }
