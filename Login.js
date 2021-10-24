@@ -22,7 +22,7 @@ export default function LoginScreen(navigation) {
                 <TextInput
                     style={styles.TextInput}
                     placeholder="Email"
-                    placeholderTextColor="#003f5c"
+                    placeholderTextColor='black'
                     onChangeText={(email) => setEmail(email)}
                 />
             </View>
@@ -31,7 +31,7 @@ export default function LoginScreen(navigation) {
                 <TextInput
                     style={styles.TextInput}
                     placeholder="Password"
-                    placeholderTextColor="#003f5c"
+                    placeholderTextColor="black"
                     secureTextEntry={true}
                     onChangeText={(password) => setPassword(password)}
                 />
@@ -51,7 +51,7 @@ export default function LoginScreen(navigation) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#E9BBFF',
+        backgroundColor: "#E9BBFF",
         alignItems: "center",
         justifyContent: "center",
         
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     },
 
     inputView: {
-        backgroundColor: "#FFC0CB",
+        backgroundColor: "#EAF0F0",
         borderRadius: 30,
         width: "70%",
         height: 45,
@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     forgot_button: {
         height: 30,
         marginBottom: 30,
+        color: 'blue'
     },
 
     loginBtn: {
@@ -96,6 +97,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 40,
-        backgroundColor: "#FF1493",
+        backgroundColor: "#FF0000",
+        color: 'white'
     },
 });
