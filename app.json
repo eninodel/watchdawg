@@ -4,7 +4,7 @@
     "slug": "watchdawg",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/notif-icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
@@ -33,7 +33,7 @@
         "icon": "./assets/notif-icon.png",
         "color": "#ffffff",
         "sounds": ["./local/assets/notification-sound.wav", "./local/assets/notification-sound-other.wav"],
-        "mode": "development"
+        "mode": "production"
       }]
     ]
   }

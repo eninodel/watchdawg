@@ -101,7 +101,7 @@ export default function AddThreatForm({setState, counter, lat, long, droppingPin
             onPress={onPressRadioButton} 
         />
             <View style={styles.buttons}>
-                <Button color='green' title="Submit"  onPress={() => handleSubmit()}></Button>
+                <Button title="Submit"  onPress={() => handleSubmit()}></Button>
                 <Button color='grey' title="Cancel" onPress={() => setState({
             showThreatForm: false, droppingPin: false
         })}></Button>

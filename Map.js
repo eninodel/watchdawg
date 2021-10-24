@@ -103,35 +103,26 @@ class Map extends React.Component {
     markersToRender.push(locationMarker);
     return(
       <View style={styles.container}>
-
-
-        {!this.state.showFilters?
         <View style={{
           position: "absolute",
           top: 50,
           left:30,
         }}>
-            <Button title="Filter" onPress={() => {
-                this.setState({ showFilters: true, lat: this.region.current.latitude + 0, long: this.region.current.longitude, latDel: this.region.current.latitudeDelta, longDel: this.region.current.longitudeDelta });
-              console.log(this.state.showFilters)
+            <Button title="🕰 Filter" onPress={() => {
+                this.setState(prevState => ({ showFilters: !prevState.showFilters, lat: this.region.current.latitude + 0, long: this.region.current.longitude, latDel: this.region.current.latitudeDelta, longDel: this.region.current.longitudeDelta }));
             }}></Button>
         </View>
-        :
+        {this.state.showFilters &&
         <View style={{
-          width: "100%",
+          width: "30%",
           height: 100,
           position: "absolute",
-          top: 50,
-            display: "flex",
-            flexDirection: "row",
-          
-          justifyContent:"space-between"
+          display: "flex",
+          flexDirection: "column"
         }}>
-          <Button title="Past Hour" onPress={()=> this.filterMarkers(60) }></Button>
-          <Button title = "Past 6 Hours" onPress = {() => this.filterMarkers(360)}></Button>
-            <Button title="Reset" onPress={() => { this.setState({ markers: startingMarkers, lat: this.region.current.latitude + 0, long: this.region.current.longitude, latDel: this.region.current.latitudeDelta, longDel: this.region.current.longitudeDelta }) }}></Button>
-            <Button title="Close" onPress={() =>
-              this.setState({ showFilters: false, lat: this.region.current.latitude + 0, long: this.region.current.longitude, latDel: this.region.current.latitudeDelta, longDel: this.region.current.longitudeDelta })}></Button>
+          <Button title="🕚 Past Hour" onPress={()=> this.filterMarkers(60) }></Button>
+          <Button title = "🕕 Past 6 Hours" onPress = {() => this.filterMarkers(360)}></Button>
+          <Button title="Clear Filter" onPress={() => { this.setState({ markers: startingMarkers, lat: this.region.current.latitude + 0, long: this.region.current.longitude, latDel: this.region.current.latitudeDelta, longDel: this.region.current.longitudeDelta }) }}></Button>
         </View>}
         <View style={styles.reportButton}>
           {!this.state.showThreatForm && !this.state.droppingPin && <Button color='#f9232c' title='📢Report' onPress={(e) => {this.setState({droppingPin: true, lat: this.region.current.latitude + 0, long: this.region.current.longitude, latDel: this.region.current.latitudeDelta, longDel: this.region.current.longitudeDelta})}} />}

@@ -100,4 +100,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#FF0000",
         color: 'white'
     },
+
+    loginText: {
+      color: 'white'
+    }
 });
