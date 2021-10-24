@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   },
   pinDropPrompt: {
     position: 'absolute',
-    top: 75,
+    top: 100,
     fontSize: 16,
     fontWeight: 'bold',
     backgroundColor: '#f9232c',

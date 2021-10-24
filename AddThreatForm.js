@@ -35,15 +35,15 @@ export default function AddThreatForm({setState, counter, lat, long, droppingPin
     const [form, setForm] = useState({title:"", body:"", threatLevel:""})
     const radioButtonsData = [{
         id: '1', // acts as primary key, should be unique and non-empty string
-        label: 'Moderate',
+        label: '😬 Moderate',
         value: 'moderate'
     }, {
         id: '2',
-        label: 'High',
+        label: '🚨 High',
         value: 'high'
     }, {
         id: '3',
-        label: 'Severe',
+        label: '💣 Severe',
         value: 'severe'    
     }]
     const [radioButtons, setRadioButtons] = useState(radioButtonsData)
@@ -89,8 +89,9 @@ export default function AddThreatForm({setState, counter, lat, long, droppingPin
     return (
         <View style={styles.container}>
             <Text style={{
-                fontSize:25
-            }}>Add a New Threat</Text>
+                fontSize:25,
+                margin: 10
+            }}>Report a New Threat</Text>
             <TextInput style={styles.input} placeholder="What happened?" onChangeText={text => setForm({...form,title:text})}></TextInput>
             <TextInput style={styles.input} multiline={true} placeholder="Tell us more about what's going on" onChangeText={text => setForm({...form,body:text})}></TextInput>
             <Text>Select Threat Level</Text>
@@ -100,8 +101,8 @@ export default function AddThreatForm({setState, counter, lat, long, droppingPin
             onPress={onPressRadioButton} 
         />
             <View style={styles.buttons}>
-                <Button style={styles.button} title="Submit"  onPress={() => handleSubmit()}></Button>
-                <Button title="Cancel" onPress={() => setState({
+                <Button color='green' title="Submit"  onPress={() => handleSubmit()}></Button>
+                <Button color='grey' title="Cancel" onPress={() => setState({
             showThreatForm: false, droppingPin: false
         })}></Button>
             </View>
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#E9BBFF',
       alignItems: 'center',
       justifyContent: 'center',
-      height:"35%",
+      height:"50%",
       width:"100%",
       zIndex:3,
       position: "absolute",
@@ -127,14 +128,10 @@ const styles = StyleSheet.create({
         width:"80%",
         borderRadius: 20,
         backgroundColor: "white",
-        marginBottom:5,
-    }, button:{
-        borderRadius: 5,
-        color:"white",
-        backgroundColor:"black"
-
+        marginBottom:10,
     },
     buttons:{
         flexDirection: "row",
+        justifyContent: "space-between"
     }
   });
