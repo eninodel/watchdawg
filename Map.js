@@ -13,6 +13,9 @@ const UW_LAT = 47.65537844011764;
 const UW_LONG = -122.30325168060438;
 
 const currentLocationIcon = <Image style={{height:35, width:35}} source={require('./assets/current-location.jpg')}/>
+const red_marker = <Image style={{height:75, width:75}} source={require('./assets/red-marker.png')}/>
+const orange_marker = <Image style={{height:75, width:75}} source={require('./assets/orange-marker.png')}/>
+const yellow_marker = <Image style={{height:75, width:75}} source={require('./assets/yellow-marker.png')}/>
 
 let startingMarkers = {}
 
@@ -72,9 +75,16 @@ class Map extends React.Component {
     var markersToRender = Object.keys(this.state.markers).map((key) => {
       if (key == 1000000 && !this.state.droppingPin) return;
       const marker = this.state.markers[key];
+      var markerIcon = null
       var color = 'red'
       if (marker["threatLevel"] === 'pending') {
         color = 'green'
+      } else if (marker["threatLevel"] === "moderate") {
+        markerIcon = yellow_marker
+      } else if (marker["threatLevel"] === "high") {
+        markerIcon = orange_marker
+      } else if (marker["threatLevel"] === "severe") {
+        markerIcon = red_marker
       }
       return (<Marker key = {key} 
       coordinate={{ latitude : marker["lat"], longitude : marker["long"] }} 
@@ -87,7 +97,7 @@ class Map extends React.Component {
       }}
 
       pinColor={color}
-      />) 
+      >{markerIcon}</Marker>) 
     })
     const locationMarker = <Marker key={1000001} coordinate={{latitude: UW_LAT - 0.0015, longitude: UW_LONG - 0.01}}>{currentLocationIcon}</Marker>;
     markersToRender.push(locationMarker);
