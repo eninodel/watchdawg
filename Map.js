@@ -1,6 +1,6 @@
 import * as React from 'react';
 import MapView ,{Marker} from 'react-native-maps';
-import { StyleSheet, Text, View, Dimensions, Button, Modal, TextInput} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Button, Modal, TextInput, Image} from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import firebaseconfig from "./Secrets"
@@ -9,6 +9,10 @@ import { registerForPushNotificationsAsync } from './Notifications';
 
 
 const app = initializeApp(firebaseconfig);
+const UW_LAT = 47.65537844011764;
+const UW_LONG = -122.30325168060438;
+
+const currentLocationIcon = <Image style={{height:35, width:35}} source={require('./assets/current-location.jpg')}/>
 
 let startingMarkers = {}
 
@@ -17,9 +21,8 @@ class Map extends React.Component {
     super(props);
     this.setState = this.setState.bind(this);
     this.filterMarkers = this.filterMarkers.bind(this);
-    this.state = { markers: {}, showThreatForm: false, lat: 47.65537844011764, long: -122.30325168060438,latDel : 0.03, longDel: 0.05, counter: 0, showModal: false, title: "", body: "", date: 0, droppingPin: false, showFilters: false };
-    this.region = React.createRef();
-    // this.startingMarkers = React.createRef();
+    this.state = { markers: {}, showThreatForm: false, lat: UW_LAT, long: UW_LONG,latDel : 0.03, longDel: 0.05, counter: 0, showModal: false, title: "", body: "", date: 0, droppingPin: false, showFilters: false };
+    this.region = React.createRef()
   }
   
   componentDidMount() {
@@ -66,6 +69,28 @@ class Map extends React.Component {
   }
   
   render() {
+    var markersToRender = Object.keys(this.state.markers).map((key) => {
+      if (key == 1000000 && !this.state.droppingPin) return;
+      const marker = this.state.markers[key];
+      var color = 'red'
+      if (marker["threatLevel"] === 'pending') {
+        color = 'green'
+      }
+      return (<Marker key = {key} 
+      coordinate={{ latitude : marker["lat"], longitude : marker["long"] }} 
+      
+        onPress={() => {
+          const today = new Date();
+        const diffMs = today.getTime() - marker["date"];
+        const diffMins = Math.round(diffMs/ 60000); // minutes
+        this.setState({showModal:true, title: marker["title"], body: marker["body"], date: diffMins, lat:marker["lat"], long: marker["long"] })
+      }}
+
+      pinColor={color}
+      />) 
+    })
+    const locationMarker = <Marker key={1000001} coordinate={{latitude: UW_LAT - 0.0015, longitude: UW_LONG - 0.01}}>{currentLocationIcon}</Marker>;
+    markersToRender.push(locationMarker);
     return(
       <View style={styles.container}>
 
@@ -127,27 +152,8 @@ class Map extends React.Component {
             this.setState(prevState => ({showThreatForm:true, lat: lat, long: long, latDel: this.region.latDel, longDel: this.region.longDel, markers: {...this.state.markers, 1000000: tempMarker}}));
       }}
       // adjust latitude by a little when displaying to center the selected target
-      region={{latitude: this.state.lat - 0, longitude: this.state.long, latitudeDelta: this.state.latDel, longitudeDelta: this.state.longDel}}>
-          {Object.keys(this.state.markers).map((key) => {
-            if (key == 1000000 && !this.state.droppingPin) return;
-        const marker = this.state.markers[key];
-        var color = 'red'
-        if (marker["threatLevel"] === 'pending') {
-          color = 'green'
-        }
-        return (<Marker key = {key} 
-        coordinate={{ latitude : marker["lat"], longitude : marker["long"] }} 
-        
-          onPress={() => {
-            const today = new Date();
-          const diffMs = today.getTime() - marker["date"];
-          const diffMins = Math.round(diffMs/ 60000); // minutes
-          this.setState({showModal:true, title: marker["title"], body: marker["body"], date: diffMins, lat:marker["lat"], long: marker["long"] })
-        }}
-
-        pinColor={color}
-        />) 
-      }) }
+      region={{latitude: this.state.lat + 0.01, longitude: this.state.long, latitudeDelta: this.state.latDel, longitudeDelta: this.state.longDel}}>
+        {markersToRender}
       </MapView>
       <Modal
         animationType="slide"
@@ -155,7 +161,7 @@ class Map extends React.Component {
         visible={this.state.showModal}
         onRequestClose={() => {
           Alert.alert("Modal has been closed.");
-          this.setState({showModal:false})
+          this.setState({showModal:false, latDel: this.region.latitudeDelta, longDel: this.region.longitudeDelta})
         }}
       >
           <View style={styles.modal}>
